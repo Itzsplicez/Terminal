@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terminal</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Courier New', monospace;
+      background-color: #2e3436;
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .terminal {
+      background-color: #2e3436;
+      color: white;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 16px;
+    }
+    #terminal-output {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      flex-grow: 1;
+      margin-bottom: 10px;
+      overflow-y: auto;
+    }
+    #terminal-input {
+      background-color: #3c4447;
+      color: white;
+      border: 2px solid #333;
+      width: 100%;
+      font-size: 16px;
+      outline: none;
+      caret-color: white;
+      padding: 10px;
+    }
+    .red-text {
+      color: red;
+    }
+    .blue-text {
+      color: lightblue;
+    }
+    .green-text {
+      color: green;
+    }
+    .virus-text {
+      color: green;
+      font-family: 'Courier New', monospace;
+    }
+    .made-by {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #ccc;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="made-by">Made by Itzsplicez</div>
+  <div class="terminal">
+    <pre id="terminal-output"></pre>
+    <input id="terminal-input" type="text" autofocus />
+  </div>
+
+  <script>
+    const terminalInput = document.getElementById('terminal-input');
+    const terminalOutput = document.getElementById('terminal-output');
+    let promptPrefix = "";
+    const pageLoadTime = Date.now();
+
+    window.onload = function () {
+      terminalInput.focus();
+      typeText("Welcome back to terminal Itzsplicez!\nType '/help' for commands.\n", 100);
+    };
+
+    function typeText(text, speed) {
+      let index = 0;
+      function type() {
+        if (index < text.length) {
+          terminalOutput.textContent += text.charAt(index);
+          index++;
+          setTimeout(type, speed);
+        } else {
+          terminalOutput.textContent += '\n';
+          setTimeout(() => {
+            printPrompt();
+            terminalInput.focus();
+            autoScroll();
+          }, 500);
+        }
+      }
+      type();
+    }
+
+    function printPrompt() {
+      terminalOutput.innerHTML += `${promptPrefix} `;
+    }
+
+    function autoScroll() {
+      terminalOutput.scrollTop = terminalOutput.scrollHeight;
+      if (terminalOutput.scrollHeight > terminalOutput.clientHeight) {
+        let lines = terminalOutput.innerText.split("\n");
+        if (lines.length > 20) {
+          terminalOutput.innerText = lines.slice(lines.length - 20).join("\n");
+        }
+      }
+    }
+
+    terminalInput.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        const userInput = terminalInput.value.trim();
+        if (userInput) {
+          terminalOutput.innerHTML += `${promptPrefix} <span class="">${userInput}</span>\n`;
+          terminalInput.value = '';
+          terminalOutput.scrollTop = terminalOutput.scrollHeight;
+
+          const print = (text) => terminalOutput.innerHTML += `<span class="">${text}</span>\n`;
+
+          if (userInput === '/help') {
+            print("------------------------");
+            print("/clear - Clears the terminal.");
+            print("/date - Displays the current date.");
+            print("/time - Displays the current time.");
+            print("/uptime - Displays how long you've had the terminal open.");
+            print("/browser - Get browser/device info.");
+            print("/javascript-check - Check if JavaScript is enabled.");
+            print("/cpuload - Estimate CPU load.");
+            print("/help 2 - Show more commands.");
+            print("------------------------");
+            print("Page 1 of 2");
+            print("------------------------");
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/help 2') {
+            print("------------------------");
+            print("/geolocation - Get user geolocation.");
+            print("/battery - Check device battery status.");
+            print("/resolution - Get screen resolution.");
+            print("/online - Check if the device is connected to the internet.");
+            print("------------------------");
+            print("Page 2 of 2");
+            print("------------------------");
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/clear') {
+            terminalOutput.innerHTML = '';
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/date') {
+            const currentDate = new Date();
+            print(currentDate.toDateString());
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/time') {
+            const currentTime = new Date();
+            print(currentTime.toLocaleTimeString());
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/uptime') {
+            const uptime = Math.floor((Date.now() - pageLoadTime) / 1000);
+            print(`${uptime} seconds`);
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/browser') {
+            const browserInfo = navigator.userAgent;
+            print(browserInfo);
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/javascript-check') {
+            if (typeof(Storage) !== "undefined") {
+              print("JavaScript is enabled.");
+            } else {
+              print("JavaScript is disabled.");
+            }
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/cpuload') {
+            let load = Math.random() * 100;
+            print(`Estimated CPU load: ${load.toFixed(2)}%`);
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/geolocation') {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition((position) => {
+                const { latitude, longitude } = position.coords;
+                print(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                printPrompt();
+                autoScroll();
+              }, () => {
+                print("Unable to retrieve geolocation.");
+                printPrompt();
+                autoScroll();
+              });
+            } else {
+              print("Geolocation is not supported by this browser.");
+              printPrompt();
+              autoScroll();
+            }
+            return;
+          }
+
+          if (userInput === '/battery') {
+            if (navigator.getBattery) {
+              navigator.getBattery().then((battery) => {
+                const { level, charging } = battery;
+                print(`Battery level: ${(level * 100).toFixed(2)}%`);
+                print(`Charging: ${charging ? "Yes" : "No"}`);
+                printPrompt();
+                autoScroll();
+              });
+            } else {
+              print("Battery status is not supported by this browser.");
+              printPrompt();
+              autoScroll();
+            }
+            return;
+          }
+
+          if (userInput === '/resolution') {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            print(`Screen resolution: ${width}x${height}`);
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          if (userInput === '/online') {
+            if (navigator.onLine) {
+              print("You are online.");
+            } else {
+              print("You are offline.");
+            }
+            printPrompt();
+            autoScroll();
+            return;
+          }
+
+          print("Command not recognized. Type '/help' for a list of commands.");
+          printPrompt();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
